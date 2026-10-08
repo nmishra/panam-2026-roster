@@ -48,6 +48,10 @@ td a:hover{text-decoration:underline}
 .sub{color:var(--muted);font-size:.85rem}.warn{color:#b45309;font-size:.8rem}
 .mine{margin:8px 0 0;padding-left:18px}.mine li{margin:2px 0}
 .was{color:var(--muted);font-weight:400;font-size:.85em;text-decoration:line-through}
+.daybar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.daybar button{font-size:.95rem;padding:9px 16px;border-radius:999px;font-weight:600}
+.daybar button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .daybar button[aria-pressed="true"]{color:#0f1320}}
 .alert{background:#fde68a;color:#78350f;border:2px solid #f59e0b;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-weight:700;font-size:1rem}
 .note{background:var(--accent-soft);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.92rem}
 details.prog{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:14px}
@@ -84,6 +88,7 @@ footer a{color:var(--accent)}
   <div class="note">⏱ Times are the organizers' <b>estimated</b> schedule. Athletes must be at the venue <b>30 minutes before the session starts</b>. Oct 8–9 times are each event's slot from the organizers' detailed timetable (issued Oct 8, 13:33).</div>
   <details class="prog" id="prog"><summary>📅 Full competition program (all events, Oct 8–11)</summary>
     <div class="days" id="days"></div><div class="sess" id="sess"></div><p class="sub" style="padding:0 14px 14px;margin:0">Bold = Kungfu Taolu (the events in the roster below). Numbers in brackets = entries. Wushu abbreviations: CQ Changquan · NQ Nanquan · TJQ Taijiquan · DS Daoshu · JS Jianshu · GS Gunshu · QS Qiangshu · ND Nandao · NG Nangun · TJJ Taijijian · TJS Taijishan.</p></details>
+  <div class="daybar" id="daybar" role="group" aria-label="Filter by date"></div>
   <div class="filters" id="filters">
     <label class="search">Search athlete, style, category…
       <input id="q" type="search" placeholder="e.g. Mishra, Shaolin Staff, Peru" autocomplete="off">
@@ -188,6 +193,10 @@ function render(){
       `<option value="${esc(v)}">${esc(k==="group"? v+" · "+ageOf(v) : v)} (${counts[v]})</option>`).join("");
     s.value = state[k];
   });
+  const dayCounts={};DATA.forEach(r=>{if(matches(r,"day"))dayCounts[r.day]=(dayCounts[r.day]||0)+1;});
+  const allDays=[...new Set(DATA.map(r=>r.day))].sort((a,b)=>a.slice(-2).localeCompare(b.slice(-2),undefined,{numeric:true}));
+  $("daybar").innerHTML=[["","All days"],...allDays.map(d=>[d,d])].map(([v,l])=>`<button type="button" data-d="${esc(v)}" aria-pressed="${state.day===v}">${esc(l)} <span class="sub">${v?(dayCounts[v]||0):Object.values(dayCounts).reduce((a,b)=>a+b,0)}</span></button>`).join("");
+  $("daybar").querySelectorAll("button").forEach(b=>b.onclick=()=>{state.day=b.dataset.d;render();});
   const rows = DATA.filter(r=>matches(r));
   const [sk,dir] = state.sort;
   rows.sort((a,b)=> dir*a[sk].localeCompare(b[sk]) || a.group.localeCompare(b.group) || a.athlete.localeCompare(b.athlete));
