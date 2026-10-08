@@ -22,3 +22,4 @@ Static GitHub Pages site (https://nmishra.github.io/panam-2026-roster/, short li
 
 ## Live announcements
 `data/announcement.txt` is shown as a yellow banner at the top of the page. Edit it for delays and other day-of updates, and empty the file to hide the banner. Include the time the update was posted.
+- Day-of delays: `data/sessions.json` → `"delays": {"Thu Oct 8": 120}` (minutes per day). The page shifts that day's roster and program times and shows the original crossed out. Remove the entry when the schedule is back on time.

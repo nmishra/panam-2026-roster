@@ -102,5 +102,8 @@
    "fop": "FOP 1",
    "note": ""
   }
+ },
+ "delays": {
+  "Thu Oct 8": 120
  }
 }

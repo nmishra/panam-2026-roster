@@ -47,6 +47,7 @@ td a:hover{text-decoration:underline}
 .athletebox h2{margin:0 0 4px;font-size:1.05rem}
 .sub{color:var(--muted);font-size:.85rem}.warn{color:#b45309;font-size:.8rem}
 .mine{margin:8px 0 0;padding-left:18px}.mine li{margin:2px 0}
+.was{color:var(--muted);font-weight:400;font-size:.85em;text-decoration:line-through}
 .alert{background:#fde68a;color:#78350f;border:2px solid #f59e0b;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-weight:700;font-size:1rem}
 .note{background:var(--accent-soft);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.92rem}
 details.prog{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:14px}
@@ -128,9 +129,12 @@ fetch("data/announcement.txt",{cache:"no-cache"}).then(r=>r.ok?r.text():"").then
 (async function main(){
 const get=(p,t)=>fetch(p,{cache:"no-cache"}).then(r=>{if(!r.ok) throw new Error(p+" "+r.status); return r[t]();});
 const [entries, S, PROGRAM] = await Promise.all([get("data/entries.csv","text"),get("data/sessions.json","json"),get("data/program.json","json")]);
+const DELAYS=S.delays||{};
+const shift=(tm,d)=>{if(!d||!tm)return tm;const [h,m]=tm.split(":").map(Number),x=h*60+m+d;return String(Math.floor(x/60)%24).padStart(2,"0")+":"+String(x%60).padStart(2,"0");};
+const tm=r=>esc(r.time)+(r.orig?` <span class="was">(was ${esc(r.orig)})</span>`:"");
 const DATA = parseCSV(entries).map(r=>{
   const session=r.group+" "+kindOf(r), s=S.sessions[session]||{day:"TBD",time:"",fop:"",note:"Not found in program"};
-  return {...r, age:S.ages[r.group]||"", session, day:s.day, time:s.time, fop:s.fop, note:s.note||""};
+  return {...r, age:S.ages[r.group]||"", session, day:s.day, time:shift(s.time,DELAYS[s.day]||0), orig:DELAYS[s.day]?s.time:"", fop:s.fop, note:s.note||""};
 });
 const FIELDS = [
   ["day","Day"],["fop","FOP (mat)"],["group","Group"],["gender","Gender"],["type","Type"],["category","Category"],["style","Style / Event"],["country","Country"]
@@ -195,12 +199,12 @@ function render(){
 
   if (state.athlete){
     const ev = DATA.filter(r=>r.athlete===state.athlete), f = ev[0];
-    $("athlete").innerHTML = f ? `<div class="athletebox"><h2>${esc(f.athlete)}</h2><p>${esc(f.country)} · ${esc(f.group)} ${esc(f.gender)} · ${esc(f.age)} · ${ev.length} event${ev.length>1?"s":""}</p><ul class="mine">${ev.slice().sort((a,b)=>a.when.localeCompare(b.when)).map(e=>`<li><b>${esc(e.day)} ${esc(e.time)}</b> · ${esc(e.fop)} · ${esc(e.style)}${e.type==="Addl. Weapon"?" (addl.)":""}</li>`).join("")}</ul></div>` : "";
+    $("athlete").innerHTML = f ? `<div class="athletebox"><h2>${esc(f.athlete)}</h2><p>${esc(f.country)} · ${esc(f.group)} ${esc(f.gender)} · ${esc(f.age)} · ${ev.length} event${ev.length>1?"s":""}</p><ul class="mine">${ev.slice().sort((a,b)=>a.when.localeCompare(b.when)).map(e=>`<li><b>${esc(e.day)} ${tm(e)}</b> · ${esc(e.fop)} · ${esc(e.style)}${e.type==="Addl. Weapon"?" (addl.)":""}</li>`).join("")}</ul></div>` : "";
   } else $("athlete").innerHTML = "";
 
   $("body").innerHTML = rows.map(r=>`<tr>
     <td class="ath" data-l="Athlete"><a href="#" data-a="${esc(r.athlete)}">${esc(r.athlete)}</a></td>
-    <td data-l="When"><b>${esc(r.day)} · ${esc(r.time)}</b><br><span class="sub">${esc(r.fop)} · ${esc(r.session)}</span>${r.note?`<br><span class="warn">⚠ ${esc(r.note)}</span>`:""}</td>
+    <td data-l="When"><b>${esc(r.day)} · ${tm(r)}</b><br><span class="sub">${esc(r.fop)} · ${esc(r.session)}</span>${r.note?`<br><span class="warn">⚠ ${esc(r.note)}</span>`:""}</td>
     <td data-l="Group">${esc(r.group)}</td>
     <td data-l="Gender">${esc(r.gender)}</td>
     <td data-l="Type"><span class="tag${r.type==="Addl. Weapon"?" addl":""}">${esc(r.type)}</span></td>
@@ -231,7 +235,7 @@ const dayNames=[...new Set(PROGRAM.map(p=>p.day))];let pday=dayNames[0];
 function renderProg(){
   $("days").innerHTML=dayNames.map(d=>`<button type="button" aria-pressed="${d===pday}">${d}</button>`).join("");
   $("days").querySelectorAll("button").forEach(b=>b.onclick=()=>{pday=b.textContent;renderProg();});
-  $("sess").innerHTML=PROGRAM.filter(p=>p.day===pday).map(p=>`<div class="box"><h4>${esc(p.slot)}</h4><h3>${esc(p.fop)} · ${esc(p.kind)}</h3><ul>${p.items.map(i=>`<li class="${p.kind==="Kungfu Taolu"?"kf":""}">${esc(i)}</li>`).join("")}</ul></div>`).join("");
+  $("sess").innerHTML=PROGRAM.filter(p=>p.day===pday).map(p=>`<div class="box"><h4>${DELAYS[p.day]?esc(p.slot.replace(/\d{1,2}:\d{2}/g,x=>shift(x.padStart(5,"0"),DELAYS[p.day])))+` <span class="was">(was ${esc(p.slot)})</span>`:esc(p.slot)}</h4><h3>${esc(p.fop)} · ${esc(p.kind)}</h3><ul>${p.items.map(i=>`<li class="${p.kind==="Kungfu Taolu"?"kf":""}">${DELAYS[p.day]?esc(i).replace(/^(\d{1,2}:\d{2})/,x=>`<b>${shift(x.padStart(5,"0"),DELAYS[p.day])}</b> <span class="was">(was ${x})</span>`):esc(i)}</li>`).join("")}</ul></div>`).join("");
 }
 renderProg();
 $("csv").onclick=e=>{e.preventDefault();const k=["athlete","group","gender","age","type","category","style","country","day","time","fop","session","note"];
