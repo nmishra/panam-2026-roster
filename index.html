@@ -49,6 +49,12 @@ td a:hover{text-decoration:underline}
 .mine{margin:8px 0 0;padding-left:18px}.mine li{margin:2px 0}
 .was{color:var(--muted);font-weight:400;font-size:.85em;text-decoration:line-through}
 .daybar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.hourbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.hourbar .lbl{font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-right:4px}
+.hourbar button{border-radius:999px;padding:6px 11px;font-variant-numeric:tabular-nums}
+.hourbar button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.hourbar button:disabled{opacity:.4;cursor:default}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hourbar button[aria-pressed="true"]{color:#0f1320}}
 .daybar button{font-size:.95rem;padding:9px 16px;border-radius:999px;font-weight:600}
 .daybar button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .daybar button[aria-pressed="true"]{color:#0f1320}}
@@ -89,6 +95,7 @@ footer a{color:var(--accent)}
   <details class="prog" id="prog"><summary>📅 Full competition program (all events, Oct 8–11)</summary>
     <div class="days" id="days"></div><div class="sess" id="sess"></div><p class="sub" style="padding:0 14px 14px;margin:0">Bold = Kungfu Taolu (the events in the roster below). Numbers in brackets = entries. Wushu abbreviations: CQ Changquan · NQ Nanquan · TJQ Taijiquan · DS Daoshu · JS Jianshu · GS Gunshu · QS Qiangshu · ND Nandao · NG Nangun · TJJ Taijijian · TJS Taijishan.</p></details>
   <div class="daybar" id="daybar" role="group" aria-label="Filter by date"></div>
+  <div class="hourbar" id="hourbar" role="group" aria-label="Filter by time (tap several)"></div>
   <div class="filters" id="filters">
     <label class="search">Search athlete, style, category…
       <input id="q" type="search" placeholder="e.g. Mishra, Shaolin Staff, Peru" autocomplete="off">
@@ -145,10 +152,11 @@ const DATA = parseCSV(entries).map(r=>{
   return {...r, age:S.ages[r.group]||"", session, day:s.day, time:shift(s.time,DELAYS[s.day]||0), orig:DELAYS[s.day]?s.time:"", fop:s.fop, note:s.note||""};
 });
 const FIELDS = [
-  ["day","Day"],["hour","Time"],["fop","Ring"],["group","Group"],["gender","Gender"],["type","Type"],["category","Category"],["style","Style / Event"],["country","Country"]
+  ["day","Day"],["fop","Ring"],["group","Group"],["gender","Gender"],["type","Type"],["category","Category"],["style","Style / Event"],["country","Country"]
 ];
 const COLS = [["athlete","Athlete"],["when","When / Ring"],["group","Group"],["gender","Gender"],["type","Type"],["category","Category"],["style","Style / Event"],["country","Country"]];
-const state = {q:"", athlete:"", sort:["when",1]};
+const state = {q:"", athlete:"", hour:"", sort:["when",1]};
+const hoursSel=()=>state.hour?state.hour.split(","):[];
 DATA.forEach(r => r.when = r.day.slice(-5)+" "+r.time+" "+r.fop);
 // hour blocks an entry overlaps, e.g. 09:55–10:15 → ["09:00–10:00","10:00–11:00"]
 const toMin=s=>{const [h,m]=s.split(":").map(Number);return h*60+m;}, hh=h=>String(h).padStart(2,"0")+":00";
@@ -179,6 +187,7 @@ COLS.forEach(([k,label])=>{
 
 function matches(r, skip){
   for (const [k] of FIELDS) if (k!==skip && state[k] && !vals(r,k).includes(state[k])) return false;
+  if (skip!=="hour" && state.hour){ const hs=hoursSel(); if(!r.hour.some(h=>hs.includes(h))) return false; }
   if (state.athlete && r.athlete!==state.athlete) return false;
   if (state.q){ for (const w of norm(state.q).split(/\s+/).filter(Boolean)) if(!r._s.includes(w)) return false; }
   return true;
@@ -202,6 +211,10 @@ function render(){
   const allDays=[...new Set(DATA.map(r=>r.day))].sort((a,b)=>a.slice(-2).localeCompare(b.slice(-2),undefined,{numeric:true}));
   $("daybar").innerHTML=[["","All days"],...allDays.map(d=>[d,d])].map(([v,l])=>`<button type="button" data-d="${esc(v)}" aria-pressed="${state.day===v}">${esc(l)} <span class="sub">${v?(dayCounts[v]||0):Object.values(dayCounts).reduce((a,b)=>a+b,0)}</span></button>`).join("");
   $("daybar").querySelectorAll("button").forEach(b=>b.onclick=()=>{state.day=b.dataset.d;render();});
+  const hc={};DATA.forEach(r=>{if(matches(r,"hour"))r.hour.forEach(h=>hc[h]=(hc[h]||0)+1);});
+  const allH=[...new Set(DATA.flatMap(r=>r.hour))].sort(), sel=hoursSel();
+  $("hourbar").innerHTML=`<span class="lbl">Time (tap several)</span>`+allH.map(h=>`<button type="button" data-h="${h}" aria-pressed="${sel.includes(h)}" ${!hc[h]&&!sel.includes(h)?"disabled":""}>${h.replace(/:00/g,"")}h <span class="sub">${hc[h]||0}</span></button>`).join("")+(sel.length?` <button type="button" data-h="">Any time</button>`:"");
+  $("hourbar").querySelectorAll("button").forEach(b=>b.onclick=()=>{const h=b.dataset.h; if(!h){state.hour="";} else {const s=new Set(hoursSel()); s.has(h)?s.delete(h):s.add(h); state.hour=[...s].sort().join(",");} render();});
   const rows = DATA.filter(r=>matches(r));
   const [sk,dir] = state.sort;
   rows.sort((a,b)=> dir*a[sk].localeCompare(b[sk]) || a.group.localeCompare(b.group) || a.athlete.localeCompare(b.athlete));
@@ -210,6 +223,7 @@ function render(){
 
   const chips = [];
   if (state.athlete) chips.push(["athlete","Athlete",state.athlete]);
+  if (state.hour) chips.push(["hour","Time",hoursSel().map(h=>h.replace(/:00/g,"")+"h").join(", ")]);
   FIELDS.forEach(([k,label])=>{ if(state[k]) chips.push([k,label,state[k]]); });
   $("active").innerHTML = chips.map(([k,l,v])=>`<button class="chip" data-k="${k}" title="Remove filter">${l}: <b>${esc(v)}</b> ✕</button>`).join(" ");
   $("active").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{state[b.dataset.k]="";render();});
@@ -235,18 +249,18 @@ function render(){
 
 function writeHash(){
   const p = new URLSearchParams();
-  ["q","athlete",...FIELDS.map(f=>f[0])].forEach(k=>{ if(state[k]) p.set(k,state[k]); });
+  ["q","athlete","hour",...FIELDS.map(f=>f[0])].forEach(k=>{ if(state[k]) p.set(k,state[k]); });
   const h = p.toString();
   history.replaceState(null,"",h ? "#"+h : location.pathname+location.search);
 }
 function readHash(){
   const p = new URLSearchParams(location.hash.slice(1));
-  ["q","athlete",...FIELDS.map(f=>f[0])].forEach(k=>state[k]=p.get(k)||"");
+  ["q","athlete","hour",...FIELDS.map(f=>f[0])].forEach(k=>state[k]=p.get(k)||"");
   state.fop=state.fop.replace(/^FOP /,"Ring ");
   $("q").value = state.q;
 }
 let t; $("q").addEventListener("input",e=>{clearTimeout(t);t=setTimeout(()=>{state.q=e.target.value;render();},120);});
-$("reset").onclick=()=>{["q","athlete",...FIELDS.map(f=>f[0])].forEach(k=>state[k]="");$("q").value="";render();};
+$("reset").onclick=()=>{["q","athlete","hour",...FIELDS.map(f=>f[0])].forEach(k=>state[k]="");$("q").value="";render();};
 $("share").onclick=async()=>{try{await navigator.clipboard.writeText(location.href);$("share").textContent="Link copied!";}catch(e){prompt("Copy this link:",location.href);}setTimeout(()=>$("share").textContent="Copy link to this view",1500);};
 window.addEventListener("hashchange",()=>{readHash();render();});
 const dayNames=[...new Set(PROGRAM.map(p=>p.day))];let pday=dayNames[0];
