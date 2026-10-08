@@ -19,3 +19,6 @@ Static GitHub Pages site (https://nmishra.github.io/panam-2026-roster/, short li
 
 ## Preferences
 - The user rejected estimated per-athlete/per-event time windows inside a block; show only the official block start time, day and FOP.
+
+## Live announcements
+`data/announcement.txt` is shown as a yellow banner at the top of the page. Edit it for delays and other day-of updates, and empty the file to hide the banner. Include the time the update was posted.

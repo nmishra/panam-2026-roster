@@ -47,6 +47,7 @@ td a:hover{text-decoration:underline}
 .athletebox h2{margin:0 0 4px;font-size:1.05rem}
 .sub{color:var(--muted);font-size:.85rem}.warn{color:#b45309;font-size:.8rem}
 .mine{margin:8px 0 0;padding-left:18px}.mine li{margin:2px 0}
+.alert{background:#fde68a;color:#78350f;border:2px solid #f59e0b;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-weight:700;font-size:1rem}
 .note{background:var(--accent-soft);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.92rem}
 details.prog{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:14px}
 details.prog summary{cursor:pointer;padding:12px 14px;font-weight:700}
@@ -78,6 +79,7 @@ footer a{color:var(--accent)}
   <p>15th Pan American Wushu &amp; 5th Pan American Kungfu &amp; Taijiquan Championships · Oct 5–11, 2026 · Buenos Aires, Argentina</p>
 </header>
 <main>
+  <div class="alert" id="alert" hidden></div>
   <div class="note">⏱ Times are the organizers' <b>estimated</b> schedule. Athletes must be at the venue <b>30 minutes before the session starts</b>. The time shown is when that group/event block <i>starts</i>, so an athlete may compete later within the block.</div>
   <details class="prog" id="prog"><summary>📅 Full competition program (all events, Oct 8–11)</summary>
     <div class="days" id="days"></div><div class="sess" id="sess"></div><p class="sub" style="padding:0 14px 14px;margin:0">Bold = Kungfu Taolu (the events in the roster below). Numbers in brackets = entries. Wushu abbreviations: CQ Changquan · NQ Nanquan · TJQ Taijiquan · DS Daoshu · JS Jianshu · GS Gunshu · QS Qiangshu · ND Nandao · NG Nangun · TJJ Taijijian · TJS Taijishan.</p></details>
@@ -122,6 +124,7 @@ function kindOf(r){
   if(r.category==="Wing Chun") return "Barehand";
   return r.type==="Barehand" ? "Barehand" : "Weapon";
 }
+fetch("data/announcement.txt",{cache:"no-cache"}).then(r=>r.ok?r.text():"").then(t=>{t=t.trim();const a=document.getElementById("alert");if(t){a.textContent=t;a.hidden=false;}}).catch(()=>{});
 (async function main(){
 const get=(p,t)=>fetch(p,{cache:"no-cache"}).then(r=>{if(!r.ok) throw new Error(p+" "+r.status); return r[t]();});
 const [entries, S, PROGRAM] = await Promise.all([get("data/entries.csv","text"),get("data/sessions.json","json"),get("data/program.json","json")]);
