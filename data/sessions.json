@@ -1,0 +1,106 @@
+{
+ "ages": {
+  "Group A": "11 & under (born 2015+)",
+  "Group B": "12–14 (born 2012–2014)",
+  "Group C": "15–17 (born 2009–2011)",
+  "Group D": "18–39 (born 1987–2008)"
+ },
+ "sessions": {
+  "Group A Barehand": {
+   "day": "Thu Oct 8",
+   "time": "17:00",
+   "fop": "FOP 1",
+   "note": ""
+  },
+  "Group A Taijiquan": {
+   "day": "Thu Oct 8",
+   "time": "08:55",
+   "fop": "FOP 3",
+   "note": ""
+  },
+  "Group A Weapon": {
+   "day": "Thu Oct 8",
+   "time": "10:10",
+   "fop": "FOP 1",
+   "note": ""
+  },
+  "Group A Taiji Weapon": {
+   "day": "Thu Oct 8",
+   "time": "14:00",
+   "fop": "FOP 3",
+   "note": ""
+  },
+  "Group B Barehand": {
+   "day": "Thu Oct 8",
+   "time": "08:00",
+   "fop": "FOP 1",
+   "note": ""
+  },
+  "Group B Taijiquan": {
+   "day": "Thu Oct 8",
+   "time": "09:05",
+   "fop": "FOP 3",
+   "note": ""
+  },
+  "Group B Weapon": {
+   "day": "Thu Oct 8",
+   "time": "14:00",
+   "fop": "FOP 1",
+   "note": "Group B Weapon runs in two blocks: 14:00 (71) and 16:20 (20)"
+  },
+  "Group B Taiji Weapon": {
+   "day": "Thu Oct 8",
+   "time": "11:30",
+   "fop": "FOP 3",
+   "note": ""
+  },
+  "Group C Barehand": {
+   "day": "Thu Oct 8",
+   "time": "08:00",
+   "fop": "FOP 2",
+   "note": ""
+  },
+  "Group C Taijiquan": {
+   "day": "Thu Oct 8",
+   "time": "09:35",
+   "fop": "FOP 3",
+   "note": ""
+  },
+  "Group C Weapon": {
+   "day": "Fri Oct 9",
+   "time": "10:15",
+   "fop": "FOP 1",
+   "note": "Program lists Group C Weapon as only 20 entries at 10:15; roster has 91, so confirm with coach"
+  },
+  "Group C Taiji Weapon": {
+   "day": "Fri Oct 9",
+   "time": "08:00",
+   "fop": "FOP 3",
+   "note": ""
+  },
+  "Group D Barehand": {
+   "day": "Thu Oct 8",
+   "time": "14:15",
+   "fop": "FOP 2",
+   "note": ""
+  },
+  "Group D Taijiquan": {
+   "day": "Thu Oct 8",
+   "time": "10:35",
+   "fop": "FOP 3",
+   "note": ""
+  },
+  "Group D Weapon": {
+   "day": "Fri Oct 9",
+   "time": "08:00",
+   "fop": "FOP 2",
+   "note": ""
+  },
+  "Group D Taiji Weapon": {
+   "day": "Fri Oct 9",
+   "time": "11:15",
+   "fop": "FOP 1",
+   "note": ""
+  }
+ }
+}
