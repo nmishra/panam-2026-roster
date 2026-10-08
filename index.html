@@ -145,11 +145,16 @@ const DATA = parseCSV(entries).map(r=>{
   return {...r, age:S.ages[r.group]||"", session, day:s.day, time:shift(s.time,DELAYS[s.day]||0), orig:DELAYS[s.day]?s.time:"", fop:s.fop, note:s.note||""};
 });
 const FIELDS = [
-  ["day","Day"],["fop","Ring"],["group","Group"],["gender","Gender"],["type","Type"],["category","Category"],["style","Style / Event"],["country","Country"]
+  ["day","Day"],["hour","Time"],["fop","Ring"],["group","Group"],["gender","Gender"],["type","Type"],["category","Category"],["style","Style / Event"],["country","Country"]
 ];
 const COLS = [["athlete","Athlete"],["when","When / Ring"],["group","Group"],["gender","Gender"],["type","Type"],["category","Category"],["style","Style / Event"],["country","Country"]];
 const state = {q:"", athlete:"", sort:["when",1]};
 DATA.forEach(r => r.when = r.day.slice(-5)+" "+r.time+" "+r.fop);
+// hour blocks an entry overlaps, e.g. 09:55–10:15 → ["09:00–10:00","10:00–11:00"]
+const toMin=s=>{const [h,m]=s.split(":").map(Number);return h*60+m;}, hh=h=>String(h).padStart(2,"0")+":00";
+DATA.forEach(r=>{const [a,b]=r.time.split("–"); if(!a){r.hour=[];return;} const s=toMin(a), e=b?toMin(b):s+1;
+  r.hour=[]; for(let h=Math.floor(s/60); h*60<e; h++) r.hour.push(hh(h)+"–"+hh(h+1));});
+const vals=(r,k)=>Array.isArray(r[k])?r[k]:[r[k]];
 FIELDS.forEach(([k])=>state[k]="");
 
 const $ = id => document.getElementById(id);
@@ -173,7 +178,7 @@ COLS.forEach(([k,label])=>{
 });
 
 function matches(r, skip){
-  for (const [k] of FIELDS) if (k!==skip && state[k] && r[k]!==state[k]) return false;
+  for (const [k] of FIELDS) if (k!==skip && state[k] && !vals(r,k).includes(state[k])) return false;
   if (state.athlete && r.athlete!==state.athlete) return false;
   if (state.q){ for (const w of norm(state.q).split(/\s+/).filter(Boolean)) if(!r._s.includes(w)) return false; }
   return true;
@@ -185,7 +190,7 @@ function render(){
   // Options with counts reflect the other active filters
   FIELDS.forEach(([k,label])=>{
     const counts = {};
-    DATA.forEach(r=>{ if(matches(r,k)) counts[r[k]]=(counts[r[k]]||0)+1; });
+    DATA.forEach(r=>{ if(matches(r,k)) vals(r,k).forEach(v=>counts[v]=(counts[v]||0)+1); });
     if (state[k] && !(state[k] in counts)) counts[state[k]]=0;
     const keys = Object.keys(counts).sort((a,b)=>a.localeCompare(b));
     const s = selects[k];
