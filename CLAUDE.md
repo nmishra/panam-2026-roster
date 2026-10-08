@@ -4,7 +4,7 @@ Static GitHub Pages site (https://nmishra.github.io/panam-2026-roster/, short li
 
 ## Data files
 - `data/entries.csv`: one row per entry, transcribed from the official entry-list screenshots, **in the same order as the list**. Columns: `group` (`Group A`…), `gender` (`Female`/`Male`), `type` (`Barehand`, `Weapon`, `Addl. Weapon`), `category`, `style`, `country`, `athlete`. Copy text exactly as printed (accents, capitalization, Spanish terms like `Otros estilos sureños.`).
-- `data/sessions.json`: `ages` per group, and `sessions` keyed `"<group> <kind>"` → `{day, time, fop, note}`. Kind is derived in `index.html` (`kindOf`): Taijiquan Routines → `Taijiquan`; styles starting with Taiji / containing Taijijian → `Taiji Weapon`; Wing Chun (barehand) → `Barehand`; else Barehand/Weapon by type (Addl. Weapon and Wing Chun Weapon → `Weapon`). Every group+kind in entries.csv needs a sessions entry or it shows "TBD".
+- `data/sessions.json`: `ages` per group, and `sessions` keyed `"<group> <kind>"` → `{day, time, fop, note} (fop values are "Ring 1/2/3"; the organizers call them FOP/Area)`. Kind is derived in `index.html` (`kindOf`): Taijiquan Routines → `Taijiquan`; styles starting with Taiji / containing Taijijian → `Taiji Weapon`; Wing Chun (barehand) → `Barehand`; else Barehand/Weapon by type (Addl. Weapon and Wing Chun Weapon → `Weapon`). Every group+kind in entries.csv needs a sessions entry or it shows "TBD".
 - `data/timetable.csv`: organizers' detailed per-event timetable (Oct 8–9, issued Oct 8 13:33, from `Dia1y2_14hs0810.pdf`). `entries.csv` columns `ev_day, ev_fop, ev_start, ev_end, ev_name, ev_note` hold each entry's matched slot; the page uses them over `sessions.json`. Regenerate with `python3 tools/match_timetable.py write` (run from the repo root). It prints unmatched entries and per-event count mismatches vs the PDF; review them before pushing. Ties and overflowing "unified" events get a combined window plus a note.
 - `data/program.json`: full Competition Detailed Program (all days, all FOPs), shown in the collapsible section.
 
@@ -19,7 +19,8 @@ Static GitHub Pages site (https://nmishra.github.io/panam-2026-roster/, short li
 - Program says Group C Weapon = 20 entries at 10:15 Fri, but the roster has 91; flagged in the `note`.
 
 ## Preferences
-- The user rejected estimated per-athlete/per-event time windows inside a block; show only the official block start time, day and FOP.
+- The user rejected estimated per-athlete/per-event time windows inside a block; show only the official times, day and ring.
+- Use "Ring" (not FOP/Area) for the competition areas everywhere on the site.
 
 ## Live announcements
 `data/announcement.txt` is shown as a yellow banner at the top of the page. Edit it for delays and other day-of updates, and empty the file to hide the banner. Include the time the update was posted.

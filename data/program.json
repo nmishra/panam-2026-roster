@@ -2,7 +2,7 @@
 {
 "day": "Thu Oct 8",
 "slot": "08:30–17:59",
-"fop": "FOP 1",
+"fop": "Ring 1",
 "kind": "Detailed timetable (Kungfu = bold)",
 "items": [
 "08:30–09:00 - Start of competition",
@@ -55,7 +55,7 @@
 {
 "day": "Thu Oct 8",
 "slot": "08:30–18:35",
-"fop": "FOP 2",
+"fop": "Ring 2",
 "kind": "Detailed timetable (Kungfu = bold)",
 "items": [
 "08:30–09:00 - Start of competition",
@@ -109,7 +109,7 @@
 {
 "day": "Thu Oct 8",
 "slot": "08:30–15:55",
-"fop": "FOP 3",
+"fop": "Ring 3",
 "kind": "Detailed timetable (Kungfu = bold)",
 "items": [
 "08:30–09:00 - Start of competition",
@@ -143,7 +143,7 @@
 {
 "day": "Fri Oct 9",
 "slot": "07:30–21:10",
-"fop": "FOP 1",
+"fop": "Ring 1",
 "kind": "Detailed timetable (Kungfu = bold)",
 "items": [
 "07:30–08:00 - Start of competition",
@@ -201,7 +201,7 @@
 {
 "day": "Fri Oct 9",
 "slot": "07:30–21:15",
-"fop": "FOP 2",
+"fop": "Ring 2",
 "kind": "Detailed timetable (Kungfu = bold)",
 "items": [
 "07:30–08:00 - Start of competition",
@@ -249,7 +249,7 @@
 {
 "day": "Fri Oct 9",
 "slot": "07:30–20:00",
-"fop": "FOP 3",
+"fop": "Ring 3",
 "kind": "Detailed timetable (Kungfu = bold)",
 "items": [
 "07:30–08:00 - Start of competition",
@@ -278,7 +278,7 @@
 {
 "day": "Sat Oct 10",
 "slot": "08:00–12:30",
-"fop": "FOP 1",
+"fop": "Ring 1",
 "kind": "Wushu Taolu",
 "items": [
 "8:00 - Group B Boys' NG (13)",
@@ -296,7 +296,7 @@
 {
 "day": "Sat Oct 10",
 "slot": "08:00–12:30",
-"fop": "FOP 2",
+"fop": "Ring 2",
 "kind": "Wushu Taolu",
 "items": [
 "8:00 - Group B Girls' TJJ (7)",
@@ -321,7 +321,7 @@
 {
 "day": "Sat Oct 10",
 "slot": "14:00–18:30",
-"fop": "FOP 1",
+"fop": "Ring 1",
 "kind": "Wushu Taolu",
 "items": [
 "14:00 - Group A Girls' CQ (22)",
@@ -335,7 +335,7 @@
 {
 "day": "Sat Oct 10",
 "slot": "14:00–18:30",
-"fop": "FOP 2",
+"fop": "Ring 2",
 "kind": "Wushu Taolu",
 "items": [
 "14:00 - Men's CQ (49)",
@@ -356,7 +356,7 @@
 {
 "day": "Sat Oct 10",
 "slot": "20:00–22:30",
-"fop": "FOP 1",
+"fop": "Ring 1",
 "kind": "Wushu Taolu",
 "items": [
 "20:00 - Group B Girls' CQ (31)",
@@ -366,7 +366,7 @@
 {
 "day": "Sat Oct 10",
 "slot": "20:00–22:30",
-"fop": "FOP 2",
+"fop": "Ring 2",
 "kind": "Wushu Taolu",
 "items": [
 "20:00 - Group B Boys' NQ (11)",
@@ -377,7 +377,7 @@
 {
 "day": "Sun Oct 11",
 "slot": "08:00–12:30",
-"fop": "FOP 1",
+"fop": "Ring 1",
 "kind": "Wushu Taolu",
 "items": [
 "8:00 - Disabled (6)",
@@ -390,7 +390,7 @@
 {
 "day": "Sun Oct 11",
 "slot": "08:00–12:30",
-"fop": "FOP 2",
+"fop": "Ring 2",
 "kind": "Wushu Taolu",
 "items": [
 "8:00 - Men's TJJ (5)",
@@ -411,7 +411,7 @@
 {
 "day": "Sun Oct 11",
 "slot": "14:00–18:30",
-"fop": "FOP 1",
+"fop": "Ring 1",
 "kind": "Wushu Taolu",
 "items": [
 "14:00 - Women's DS (16)",
@@ -423,7 +423,7 @@
 {
 "day": "Sun Oct 11",
 "slot": "14:00–18:30",
-"fop": "FOP 2",
+"fop": "Ring 2",
 "kind": "Wushu Taolu",
 "items": [
 "14:00 - Men's TJS (2)",

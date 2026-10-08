@@ -145,9 +145,9 @@ const DATA = parseCSV(entries).map(r=>{
   return {...r, age:S.ages[r.group]||"", session, day:s.day, time:shift(s.time,DELAYS[s.day]||0), orig:DELAYS[s.day]?s.time:"", fop:s.fop, note:s.note||""};
 });
 const FIELDS = [
-  ["day","Day"],["fop","FOP (mat)"],["group","Group"],["gender","Gender"],["type","Type"],["category","Category"],["style","Style / Event"],["country","Country"]
+  ["day","Day"],["fop","Ring"],["group","Group"],["gender","Gender"],["type","Type"],["category","Category"],["style","Style / Event"],["country","Country"]
 ];
-const COLS = [["athlete","Athlete"],["when","When / FOP"],["group","Group"],["gender","Gender"],["type","Type"],["category","Category"],["style","Style / Event"],["country","Country"]];
+const COLS = [["athlete","Athlete"],["when","When / Ring"],["group","Group"],["gender","Gender"],["type","Type"],["category","Category"],["style","Style / Event"],["country","Country"]];
 const state = {q:"", athlete:"", sort:["when",1]};
 DATA.forEach(r => r.when = r.day.slice(-5)+" "+r.time+" "+r.fop);
 FIELDS.forEach(([k])=>state[k]="");
@@ -237,6 +237,7 @@ function writeHash(){
 function readHash(){
   const p = new URLSearchParams(location.hash.slice(1));
   ["q","athlete",...FIELDS.map(f=>f[0])].forEach(k=>state[k]=p.get(k)||"");
+  state.fop=state.fop.replace(/^FOP /,"Ring ");
   $("q").value = state.q;
 }
 let t; $("q").addEventListener("input",e=>{clearTimeout(t);t=setTimeout(()=>{state.q=e.target.value;render();},120);});
